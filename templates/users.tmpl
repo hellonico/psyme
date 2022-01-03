@@ -1,1 +1,17 @@
-users
+{{template "header" .}}
+<a class="noprint" href="/"><img width="32px" height="32px" src="https://www.rawshorts.com/freeicons/wp-content/uploads/2017/01/blue_repicthousebase_1484336386-1.png"></a>
+
+<div class="container">
+<div class="row">
+    <div class="column">
+        <table>
+            {{range .scores}}
+            <tr>
+                <td>{{.Name}}</td>
+                <td>{{.Score}}</td>
+            </tr>
+            {{end}}
+        </table>
+    </div>
+</div>
+</div>

@@ -7,6 +7,7 @@ import (
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"sort"
 	"time"
 )
 
@@ -59,6 +60,10 @@ type Result struct {
 	Answer   string
 	ImageURL string
 }
+type Score struct {
+	Name  string
+	Score int
+}
 
 func web() {
 
@@ -94,36 +99,39 @@ func web() {
 		session.Save()
 		c.Redirect(http.StatusSeeOther, "/summary")
 	})
+
 	router.GET("/presubmit", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "presend.tmpl", nil)
 	})
 
-	router.GET("/users/:name1/:name2", func(c *gin.Context) {
-		name1 := c.Param("name1")
-		name2 := c.Param("name2")
-		var users []User
-		err, _ := dbmap.Select(&users, fmt.Sprintf("SELECT * FROM User WHERE Name='%s' or Name='%s'", name1, name2))
+	router.GET("/users", func(c *gin.Context) {
+		//name1 := c.Param("name1")
+		//name2 := c.Param("name2")
 
-		if err != nil {
-			fmt.Printf("%s", err)
+		currentName := "nico"
+		var currentUser User
+		dbmap.Get(&currentUser, currentName)
+
+		var others []User
+		dbmap.Select(&others, fmt.Sprintf("SELECT * FROM User WHERE Name!='%s'", currentName))
+
+		var scores = make([]Score, len(others))
+
+		for i, other := range others {
+			scores[i] = Score{other.Name, compareUsers(dbmap, currentUser, other)}
 		}
 
-		jsonStr0 := users[0].Answers
-		x := map[string]string{}
-		json.Unmarshal([]byte(jsonStr0), &x)
-		fmt.Printf(jsonStr0)
+		sort.Slice(scores, func(i, j int) bool {
+			return scores[i].Score > scores[j].Score
+		})
 
-		jsonStr1 := users[1].Answers
-		y := map[string]string{}
-		json.Unmarshal([]byte(jsonStr1), &y)
-		fmt.Printf(jsonStr1)
-
-		var articles []Article
-		dbmap.Select(&articles, "SELECT * FROM Article ORDER BY MyIndex")
+		//
+		//var articles []Article
+		//dbmap.Select(&articles, "SELECT * FROM Article ORDER BY MyIndex")
 
 		//results := make([]Result, len(articles))
 
-		c.HTML(http.StatusOK, "users.tmpl", users)
+		c.HTML(http.StatusOK, "users.tmpl", gin.H{"scores": scores})
 	})
 	router.POST("/submit", func(c *gin.Context) {
 		//var request SampleRequest
@@ -131,10 +139,14 @@ func web() {
 		//if err != nil {
 		//	fmt.Printf("err: %s", err)
 		//}
-
 		session := sessions.Default(c)
+
 		answers := getResultsFromSessionAsJson(session)
 		name := c.PostForm("message")
+
+		// update user in session
+		session.Set("user", name)
+		session.Save()
 
 		obj, _ := dbmap.Get(User{}, name)
 		if obj == nil {
