@@ -10,6 +10,10 @@ import (
 	"time"
 )
 
+type SampleRequest struct {
+	Name string `form:"nameField"`
+}
+
 func search(slice []Article, item string) int {
 	for i := range slice {
 		if slice[i].Id == item {
@@ -19,8 +23,13 @@ func search(slice []Article, item string) int {
 	return -1
 }
 
-func getMapFromSessioN(session sessions.Session) map[string]string {
+func getResultsFromSessionAsJson(session sessions.Session) string {
 	var jsonStr = fmt.Sprintf("%s", session.Get("results"))
+	return jsonStr
+}
+
+func getMapFromSessioN(session sessions.Session) map[string]string {
+	jsonStr := getResultsFromSessionAsJson(session)
 
 	if jsonStr != "" {
 		x := map[string]string{}
@@ -83,6 +92,57 @@ func web() {
 		session := sessions.Default(c)
 		session.Set("results", "")
 		session.Save()
+		c.Redirect(http.StatusSeeOther, "/summary")
+	})
+	router.GET("/presubmit", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "presend.tmpl", nil)
+	})
+
+	router.GET("/users/:name1/:name2", func(c *gin.Context) {
+		name1 := c.Param("name1")
+		name2 := c.Param("name2")
+		var users []User
+		err, _ := dbmap.Select(&users, fmt.Sprintf("SELECT * FROM User WHERE Name='%s' or Name='%s'", name1, name2))
+
+		if err != nil {
+			fmt.Printf("%s", err)
+		}
+
+		jsonStr0 := users[0].Answers
+		x := map[string]string{}
+		json.Unmarshal([]byte(jsonStr0), &x)
+		fmt.Printf(jsonStr0)
+
+		jsonStr1 := users[1].Answers
+		y := map[string]string{}
+		json.Unmarshal([]byte(jsonStr1), &y)
+		fmt.Printf(jsonStr1)
+
+		var articles []Article
+		dbmap.Select(&articles, "SELECT * FROM Article ORDER BY MyIndex")
+
+		//results := make([]Result, len(articles))
+
+		c.HTML(http.StatusOK, "users.tmpl", users)
+	})
+	router.POST("/submit", func(c *gin.Context) {
+		//var request SampleRequest
+		//err := c.Bind(&request)
+		//if err != nil {
+		//	fmt.Printf("err: %s", err)
+		//}
+
+		session := sessions.Default(c)
+		answers := getResultsFromSessionAsJson(session)
+		name := c.PostForm("message")
+
+		obj, _ := dbmap.Get(User{}, name)
+		if obj == nil {
+			dbmap.Insert(&User{name, answers})
+		} else {
+			dbmap.Update(&User{name, answers})
+		}
+
 		c.Redirect(http.StatusSeeOther, "/summary")
 	})
 	router.GET("/summary", func(c *gin.Context) {

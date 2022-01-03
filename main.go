@@ -146,8 +146,8 @@ func initDb() *gorp.DbMap {
 	dbmap.TypeConverter = myTypeConverter{}
 
 	dbmap.AddTable(Article{}).SetKeys(false, "Id")
+	dbmap.AddTable(User{}).SetKeys(false, "Name")
 	err = dbmap.CreateTablesIfNotExists()
-
 	return dbmap
 }
 
