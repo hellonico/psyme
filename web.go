@@ -116,7 +116,8 @@ func web() {
 
 		currentName := possibleCurrentUser
 		var currentUser User
-		dbmap.Get(&currentUser, currentName)
+		dbmap.SelectOne(&currentUser, fmt.Sprintf("SELECT * FROM User WHERE Name='%s'", currentName))
+		//dbmap.Get(&currentUser, currentName)
 
 		var others []User
 		dbmap.Select(&others, fmt.Sprintf("SELECT * FROM User WHERE Name!='%s'", currentName))
