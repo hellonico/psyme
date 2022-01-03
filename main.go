@@ -81,9 +81,9 @@ func main() {
 		fmt.Printf("--generate\t: Generate Static Website\n")
 		fmt.Printf("--cleanHtml\t: Clean Static Website\n")
 		fmt.Printf("--cleanDb\t: Clean Database\n")
-		fmt.Printf("--regen\t: Clean and Generate Website\n")
-		fmt.Printf("--one     \t: Fetch one")
-		fmt.Printf("--web     \t: Start web server")
+		fmt.Printf("--regen \t: Clean and Generate Website\n")
+		fmt.Printf("--one     \t: Fetch one\n")
+		fmt.Printf("--web     \t: Start web server\n")
 	} else {
 		switch argsWithoutProg[0] {
 		case "--fetch":
