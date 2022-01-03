@@ -1,0 +1,32 @@
+{{template "header" .}}
+<a href="/#{{.Id}}"><img width="32px" height="32px" src="https://www.rawshorts.com/freeicons/wp-content/uploads/2017/01/blue_repicthousebase_1484336386-1.png"></a>
+<a href="{{.OriginalLink}}"><img width="32px" height="32px" src="https://image.flaticon.com/icons/png/512/1104/1104163.png"/></a>
+
+
+<br/>
+<div class="container">
+<div class="row">
+    <div class="column">
+        <h1>{{ .Title }}</h1>
+    </div>
+</div>
+<div class="row">
+    <div>
+        <img src="{{.ImageURL}}"/>
+    </div>
+    <div class="column">
+        {{.Summary}}
+        <br/><br/>
+        <a href="/c/{{.Id}}/1"><button class="button" role="button">{{.Choice1}}</button></a>
+        <a href="/c/{{.Id}}/2"><button class="button" role="button">{{.Choice2}}</button></a>
+        <a href="/c/{{.Id}}/3"><button class="button" role="button">{{.Choice3}}</button></a>
+        <a href="/c/{{.Id}}/4"><button class="button" role="button">{{.Choice4}}</button></a>
+
+    </div>
+</div>
+</div>
+
+
+</body>
+</html>
+

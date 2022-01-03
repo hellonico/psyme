@@ -1,0 +1,66 @@
+{{define "header"}}
+        <!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Summary</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100&display=swap');
+        * {
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 12pt;
+        }
+        a {
+            color: black;
+        }
+
+        @media print{
+            .noprint{
+                display:none;
+            }
+        }
+
+        /**
+        progress bar
+         */
+        .progress{
+            position:relative;
+            font-weight: bold;
+            width:500px;
+            border:1px solid #333;
+            position:relative;
+            padding:3px;
+            margin-top: 3px;
+        }
+        .bar{
+            background-color:#0492c2;
+            width:50%;
+            height:20px;
+            transition:width 150ms;
+        }
+        .percent{
+            position:absolute;
+            display:inline-block;
+            top:3px;
+            left:50%;
+            transform:translateX(-50%);
+        }
+
+
+    </style>
+
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+
+    <!-- CSS Reset -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css">
+
+    <!-- Milligram CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.css">
+
+</head>
+<body>
+
+<a class="noprint" href="/summary"><img width="32px" height="32px" src="https://d29fhpw069ctt2.cloudfront.net/icon/image/59466/preview.svg"/></a>
+
+{{end}}

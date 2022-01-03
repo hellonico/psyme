@@ -1,0 +1,62 @@
+{{template "header" .}}
+<a href="{{.a.OriginalLink}}"><img width="32px" height="32px" src="https://image.flaticon.com/icons/png/512/1104/1104163.png"/></a>
+<div class="container">
+<div class="row">
+        <div class="column">
+                <h1><a href="/a/{{.a.Id}}">{{ .a.Title }}</a></h1>
+        </div>
+</div>
+<div class="row">
+<div class="column">
+        <img src="{{.a.ImageURL}}"/>
+</div>
+<div class="column">
+        {{if eq .choice "1"}}
+        <h3>{{.a.Answer1.Title}}</h3>
+        {{.a.Answer1.Answer1}}<br/><br/>
+        {{.a.Answer1.Answer2}}<br/><br/>
+        {{.a.Answer1.Answer3}}<br/><br/>
+        {{end}}
+
+        {{if eq .choice "2"}}
+        <h3>{{.a.Answer2.Title}}</h3>
+        {{.a.Answer2.Answer1}}<br/><br/>
+        {{.a.Answer2.Answer2}}<br/><br/>
+        {{.a.Answer2.Answer3}}<br/><br/>
+        {{end}}
+
+        {{if eq .choice "3"}}
+        <h3>{{.a.Answer3.Title}}</h3>
+        {{.a.Answer3.Answer1}}<br/><br/>
+        {{.a.Answer3.Answer2}}<br/><br/>
+        {{.a.Answer3.Answer3}}<br/><br/>
+        {{end}}
+
+        {{if eq .choice "4"}}
+        <h3>{{.a.Answer4.Title}}</h3>
+        {{.a.Answer4.Answer1}}
+        {{.a.Answer4.Answer2}}<br/><br/>
+        {{.a.Answer4.Answer3}}<br/>
+        {{end}}
+
+</div>
+</div>
+
+<div class="row">
+        <div class="column"></div>
+        <div class="column"></div>
+        <div class="column">
+
+                {{if eq .next "-1"}}
+                <a class="noprint" href="/summary"><img width="32px" height="32px" src="https://d29fhpw069ctt2.cloudfront.net/icon/image/59466/preview.svg"/></a>
+                {{else}}
+                <a href="/a/{{.next}}">
+                        <img width="32px" height="32px" src="https://iconbox.fun/wp/wp-content/uploads/768_ar_h.png"/>
+                </a>
+                {{end}}
+        </div>
+</div>
+</div>
+
+</body>
+</html>

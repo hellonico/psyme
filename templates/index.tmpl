@@ -1,0 +1,11 @@
+{{template "header" .}}
+<table>
+{{range .as}}
+    <tr>
+        <td><a id="{{.Id}}" href="/a/{{.Id}}"><img title="{{.Title}}" width="50%" height="50%" src="{{.ImageURL}}"/></a></td>
+        <td><a id="{{.Id}}" href="/a/{{.Id}}">{{.Title}}</a></td>
+    </tr>
+{{end}}
+</table>
+</body>
+</html>
