@@ -95,7 +95,8 @@ func web() {
 	})
 	router.GET("/erase", func(c *gin.Context) {
 		session := sessions.Default(c)
-		session.Set("results", "")
+		session.Set("results", nil)
+		session.Set("user", nil)
 		session.Save()
 		c.Redirect(http.StatusSeeOther, "/summary")
 	})
@@ -105,10 +106,15 @@ func web() {
 	})
 
 	router.GET("/users", func(c *gin.Context) {
-		//name1 := c.Param("name1")
-		//name2 := c.Param("name2")
 
-		currentName := "nico"
+		session := sessions.Default(c)
+		possibleCurrentUser := session.Get("user")
+
+		if possibleCurrentUser == nil {
+			c.Redirect(http.StatusSeeOther, "/presubmit")
+		}
+
+		currentName := possibleCurrentUser
 		var currentUser User
 		dbmap.Get(&currentUser, currentName)
 
@@ -131,7 +137,7 @@ func web() {
 
 		//results := make([]Result, len(articles))
 
-		c.HTML(http.StatusOK, "users.tmpl", gin.H{"scores": scores})
+		c.HTML(http.StatusOK, "users.tmpl", gin.H{"current": currentName, "scores": scores})
 	})
 	router.POST("/submit", func(c *gin.Context) {
 		//var request SampleRequest
