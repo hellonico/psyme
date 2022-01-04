@@ -5,14 +5,17 @@
 <div class="row">
     <div class="column">
         <h3>マッチ度ランキング</h3>
-        <p>現在ユーザ名: {{.current}}</p>
+        <p>現在ユーザ名: {{.current}} &nbsp; 回答数: {{.currentTotal}}</p>
     </div>
 </div>
 <div class="row">
     <div class="column">
         <table class="table">
+            <thead>
+            <tr><th>なまえ</th><td>マッチ数</td><td>回答数</td></tr>
+            </thead>
             {{range .scores}}
-            <tr><td style="width:100%">{{.Name}}</td><td>{{.Score}}</td></tr>
+            <tr><td style="width:50%">{{.Name}}</td><td>{{.Score.Count}}</td><td>{{.Score.Theirs}}</td></tr>
             {{end}}
         </table>
     </div>

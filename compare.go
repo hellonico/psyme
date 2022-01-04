@@ -15,9 +15,10 @@ func getUserAnswers(user User) map[string]string {
 Compare how many common results between two users
 and returns
 */
-func compareUsers(user1 User, user2 User) int {
+func compareUsers(user1 User, user2 User) CompareResult {
 	answers1 := getUserAnswers(user1)
 	answers2 := getUserAnswers(user2)
+
 	count := 0
 	for k, v := range answers1 {
 		// fmt.Sprintf("> %d, %d\n", v, answers2[k])
@@ -25,5 +26,10 @@ func compareUsers(user1 User, user2 User) int {
 			count++
 		}
 	}
-	return count
+	return CompareResult{count, len(answers2)}
+}
+
+type CompareResult struct {
+	Count  int
+	Theirs int
 }

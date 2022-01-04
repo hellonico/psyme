@@ -57,12 +57,17 @@ type Result struct {
 }
 type Score struct {
 	Name  string
-	Score int
+	Score CompareResult
+}
+
+func getUserFromName(dbmap *gorp.DbMap, currentName string) User {
+	var currentUser User
+	dbmap.SelectOne(&currentUser, fmt.Sprintf("SELECT * FROM User WHERE Name='%s'", currentName))
+	return currentUser
 }
 
 func getScores(dbmap *gorp.DbMap, currentName string) []Score {
-	var currentUser User
-	dbmap.SelectOne(&currentUser, fmt.Sprintf("SELECT * FROM User WHERE Name='%s'", currentName))
+	currentUser := getUserFromName(dbmap, currentName)
 
 	var others []User
 	dbmap.Select(&others, fmt.Sprintf("SELECT * FROM User WHERE Name!='%s'", currentName))
@@ -73,8 +78,9 @@ func getScores(dbmap *gorp.DbMap, currentName string) []Score {
 		scores[i] = Score{other.Name, compareUsers(currentUser, other)}
 	}
 
+	// sort per best matching
 	sort.Slice(scores, func(i, j int) bool {
-		return scores[i].Score > scores[j].Score
+		return scores[i].Score.Count > scores[j].Score.Count
 	})
 	return scores
 }

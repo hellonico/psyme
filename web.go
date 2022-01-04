@@ -31,9 +31,9 @@ func web() {
 			fmt.Printf("Erro %s \n", err)
 		}
 
+		// not used for now
 		session := sessions.Default(c)
 		m := getMapFromSessioN(session)
-		fmt.Printf("%s", m)
 
 		c.HTML(http.StatusOK, "index.tmpl", gin.H{"as": articles, "results": m})
 	})
@@ -67,8 +67,9 @@ func web() {
 		if currentName == "" {
 			c.Redirect(http.StatusSeeOther, "/presubmit")
 		} else {
+			mainUser := getUserFromName(dbmap, currentName)
 			scores := getScores(dbmap, currentName)
-			c.HTML(http.StatusOK, "users.tmpl", gin.H{"current": currentName, "scores": scores})
+			c.HTML(http.StatusOK, "users.tmpl", gin.H{"current": currentName, "scores": scores, "currentTotal": len(mainUser.Answers)})
 		}
 
 	})
