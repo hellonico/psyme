@@ -68,7 +68,6 @@ func web() {
 			c.Redirect(http.StatusSeeOther, "/presubmit")
 		} else {
 			mainUser := getUserFromName(dbmap, currentName)
-
 			scores := getScores(dbmap, currentName)
 			c.HTML(http.StatusOK, "users.tmpl", gin.H{"current": currentName, "scores": scores, "currentTotal": len(getUserAnswers(mainUser))})
 		}
@@ -157,6 +156,12 @@ func web() {
 		choice := c.Param("choice")
 		session := sessions.Default(c)
 		updateResults(session, id, choice)
+
+		// if user is defined, persist
+		possibleCurrentUser := getUserFromSession(session)
+		if possibleCurrentUser != "" {
+			persistResults(session, dbmap, possibleCurrentUser)
+		}
 
 		a, _ := dbmap.Get(Article{}, id)
 		c.HTML(http.StatusOK, "choice.tmpl", gin.H{"a": a, "choice": choice, "next": next})
