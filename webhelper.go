@@ -6,12 +6,11 @@ import (
 	"github.com/gin-contrib/sessions"
 	"gopkg.in/gorp.v1"
 	"sort"
-	"time"
 )
 
-type SampleRequest struct {
-	Name string `form:"nameField"`
-}
+//type SampleRequest struct {
+//	Name string `form:"nameField"`
+//}
 
 func search(slice []Article, item string) int {
 	for i := range slice {
@@ -29,14 +28,12 @@ func getResultsFromSessionAsJson(session sessions.Session) string {
 
 func getMapFromSessioN(session sessions.Session) map[string]string {
 	jsonStr := getResultsFromSessionAsJson(session)
-
 	if jsonStr != "" {
 		x := map[string]string{}
 		json.Unmarshal([]byte(jsonStr), &x)
 		return x
 	} else {
 		m := make(map[string]string)
-		m["date"] = time.Now().String()
 		mJson, _ := json.Marshal(m)
 		session.Set("results", string(mJson))
 		return m
@@ -73,7 +70,7 @@ func getScores(dbmap *gorp.DbMap, currentName string) []Score {
 	var scores = make([]Score, len(others))
 
 	for i, other := range others {
-		scores[i] = Score{other.Name, compareUsers(dbmap, currentUser, other)}
+		scores[i] = Score{other.Name, compareUsers(currentUser, other)}
 	}
 
 	sort.Slice(scores, func(i, j int) bool {
