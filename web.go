@@ -68,8 +68,9 @@ func web() {
 			c.Redirect(http.StatusSeeOther, "/presubmit")
 		} else {
 			mainUser := getUserFromName(dbmap, currentName)
+
 			scores := getScores(dbmap, currentName)
-			c.HTML(http.StatusOK, "users.tmpl", gin.H{"current": currentName, "scores": scores, "currentTotal": len(mainUser.Answers)})
+			c.HTML(http.StatusOK, "users.tmpl", gin.H{"current": currentName, "scores": scores, "currentTotal": len(getUserAnswers(mainUser))})
 		}
 
 	})
