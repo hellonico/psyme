@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"sort"
+	"strings"
 	"time"
 )
 
@@ -117,7 +118,6 @@ func web() {
 		currentName := possibleCurrentUser
 		var currentUser User
 		dbmap.SelectOne(&currentUser, fmt.Sprintf("SELECT * FROM User WHERE Name='%s'", currentName))
-		//dbmap.Get(&currentUser, currentName)
 
 		var others []User
 		dbmap.Select(&others, fmt.Sprintf("SELECT * FROM User WHERE Name!='%s'", currentName))
@@ -132,12 +132,6 @@ func web() {
 			return scores[i].Score > scores[j].Score
 		})
 
-		//
-		//var articles []Article
-		//dbmap.Select(&articles, "SELECT * FROM Article ORDER BY MyIndex")
-
-		//results := make([]Result, len(articles))
-
 		c.HTML(http.StatusOK, "users.tmpl", gin.H{"current": currentName, "scores": scores})
 	})
 	router.POST("/submit", func(c *gin.Context) {
@@ -149,7 +143,7 @@ func web() {
 		session := sessions.Default(c)
 
 		answers := getResultsFromSessionAsJson(session)
-		name := c.PostForm("message")
+		name := strings.Trim(c.PostForm("message"), " ")
 
 		// update user in session
 		session.Set("user", name)
