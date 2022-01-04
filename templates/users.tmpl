@@ -10,11 +10,11 @@
 </div>
 <div class="row">
     <div class="column">
-        <ul>
+        <table class="table">
             {{range .scores}}
-                <li>{{.Name}} : {{.Score}}</li>
+            <tr><td style="width:100%">{{.Name}}</td><td>{{.Score}}</td></tr>
             {{end}}
-        </ul>
+        </table>
     </div>
 </div>
 </div>
