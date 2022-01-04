@@ -67,7 +67,7 @@ func parseArticle(url string) Article {
 	s := doc.Find("img.image-block__image").First()
 	a.ImageURL, _ = s.Attr("data-src")
 	a.ImageFile = fmt.Sprintf("%s.png", a.Id)
-	downloadFile(a.ImageURL, a.ImageFile)
+	// downloadFile(a.ImageURL, a.ImageFile)
 
 	// Summary
 	a.Summary = doc.Find(".trill-description > p:nth-child(2)").First().Text()

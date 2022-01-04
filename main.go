@@ -84,6 +84,7 @@ func main() {
 		fmt.Printf("--regen \t: Clean and Generate Website\n")
 		fmt.Printf("--one     \t: Fetch one\n")
 		fmt.Printf("--web     \t: Start web server\n")
+		fmt.Printf("--images  \t: Download images\n")
 	} else {
 		switch argsWithoutProg[0] {
 		case "--fetch":
@@ -102,7 +103,22 @@ func main() {
 			a.markdown()
 		case "--web":
 			web()
+		case "--images":
+			images()
 		}
+	}
+}
+
+func images() {
+	dbmap := initDb()
+	defer dbmap.Db.Close()
+
+	var articles []Article
+	dbmap.Select(&articles, "Select * from Article")
+	for _, article := range articles {
+		filePath := fmt.Sprintf("%s.png", article.Id)
+		fmt.Printf("< %s", filePath)
+		downloadFile(article.ImageURL, filePath)
 	}
 }
 
@@ -178,7 +194,6 @@ func processOne(index int, line string, dbmap *gorp.DbMap) {
 		if err != nil {
 			log.Fatalf("Cannot do database insert %s\n", err)
 		}
-
 	}
 
 }
