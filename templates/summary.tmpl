@@ -13,7 +13,13 @@
 <table>
     {{range .results}}
     <tr>
-        <td><a id="{{.Id}}" href="/a/{{.Id}}"><img src="{{.ImageURL}}"/></a></td>
+        <td><a id="{{.Id}}" href="/a/{{.Id}}">
+            {{ if eq "" .ChoiceI }}
+            <img src="{{.ImageURL}}"/>
+            {{ else }}
+            <img class="grey" src="{{.ImageURL}}"/>
+            {{ end }}
+        </a></td>
         <td><a id="{{.Id}}" href="/a/{{.Id}}">{{.Title}}</a></td>
 <!--        <td><a id="{{.Id}}" href="/c/{{.Id}}/{{.ChoiceI}}">{{.Choice}}</a></td>-->
         <td><a id="{{.Id}}" href="/c/{{.Id}}/{{.ChoiceI}}">{{.Answer}}</a></td>
