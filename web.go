@@ -1,71 +1,13 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
-	"gopkg.in/gorp.v1"
 	"net/http"
-	"sort"
 	"strings"
-	"time"
 )
-
-type SampleRequest struct {
-	Name string `form:"nameField"`
-}
-
-func search(slice []Article, item string) int {
-	for i := range slice {
-		if slice[i].Id == item {
-			return i
-		}
-	}
-	return -1
-}
-
-func getResultsFromSessionAsJson(session sessions.Session) string {
-	var jsonStr = fmt.Sprintf("%s", session.Get("results"))
-	return jsonStr
-}
-
-func getMapFromSessioN(session sessions.Session) map[string]string {
-	jsonStr := getResultsFromSessionAsJson(session)
-
-	if jsonStr != "" {
-		x := map[string]string{}
-		json.Unmarshal([]byte(jsonStr), &x)
-		return x
-	} else {
-		m := make(map[string]string)
-		m["date"] = time.Now().String()
-		mJson, _ := json.Marshal(m)
-		session.Set("results", string(mJson))
-		return m
-	}
-}
-func updateResults(session sessions.Session, id string, choice string) {
-	m := getMapFromSessioN(session)
-	m[id] = choice
-	mJson, _ := json.Marshal(m)
-	session.Set("results", string(mJson))
-	session.Save()
-}
-
-type Result struct {
-	Id       string
-	Title    string
-	ChoiceI  string
-	Choice   string
-	Answer   string
-	ImageURL string
-}
-type Score struct {
-	Name  string
-	Score int
-}
 
 func web() {
 
@@ -105,12 +47,11 @@ func web() {
 
 	router.GET("/presubmit", func(c *gin.Context) {
 		session := sessions.Default(c)
-		possibleCurrentUser := session.Get("user")
-		if possibleCurrentUser != nil {
+		possibleCurrentUser := getUserFromSession(session)
+
+		if possibleCurrentUser != "" {
 			// user already in session skip form
-			name := fmt.Sprintf("%s", possibleCurrentUser)
-			fmt.Printf("User %s is already logged in", name)
-			persistResults(session, dbmap, name)
+			persistResults(session, dbmap, possibleCurrentUser)
 			c.Redirect(http.StatusSeeOther, "/users")
 		} else {
 			// send to user form
@@ -120,17 +61,16 @@ func web() {
 	})
 
 	router.GET("/users", func(c *gin.Context) {
-
 		session := sessions.Default(c)
-		possibleCurrentUser := session.Get("user")
+		currentName := getUserFromSession(session)
 
-		if possibleCurrentUser == nil {
+		if currentName == "" {
 			c.Redirect(http.StatusSeeOther, "/presubmit")
+		} else {
+			scores := getScores(dbmap, currentName)
+			c.HTML(http.StatusOK, "users.tmpl", gin.H{"current": currentName, "scores": scores})
 		}
-		currentName := possibleCurrentUser
-		scores := getScores(dbmap, currentName)
 
-		c.HTML(http.StatusOK, "users.tmpl", gin.H{"current": currentName, "scores": scores})
 	})
 	router.POST("/submit", func(c *gin.Context) {
 		//var request SampleRequest
@@ -152,7 +92,6 @@ func web() {
 	router.GET("/summary", func(c *gin.Context) {
 		session := sessions.Default(c)
 		m := getMapFromSessioN(session)
-		// fmt.Printf("%s", m)
 		var articles []Article
 		dbmap.Select(&articles, "SELECT * FROM Article ORDER BY MyIndex")
 
@@ -224,32 +163,18 @@ func web() {
 	router.Run(":8080")
 }
 
-func getScores(dbmap *gorp.DbMap, currentName interface{}) []Score {
-	var currentUser User
-	dbmap.SelectOne(&currentUser, fmt.Sprintf("SELECT * FROM User WHERE Name='%s'", currentName))
+// func getUserFromSession(session sessions.Session) (response *string) {
+// is great but forces to return a pointer
 
-	var others []User
-	dbmap.Select(&others, fmt.Sprintf("SELECT * FROM User WHERE Name!='%s'", currentName))
-
-	var scores = make([]Score, len(others))
-
-	for i, other := range others {
-		scores[i] = Score{other.Name, compareUsers(dbmap, currentUser, other)}
-	}
-
-	sort.Slice(scores, func(i, j int) bool {
-		return scores[i].Score > scores[j].Score
-	})
-	return scores
-}
-
-func persistResults(session sessions.Session, dbmap *gorp.DbMap, name string) {
-	answers := getResultsFromSessionAsJson(session)
-
-	obj, _ := dbmap.Get(User{}, name)
-	if obj == nil {
-		dbmap.Insert(&User{name, answers})
+func getUserFromSession(session sessions.Session) string {
+	possibleCurrentUser := session.Get("user")
+	if possibleCurrentUser == nil {
+		return ""
+		// return nil
 	} else {
-		dbmap.Update(&User{name, answers})
+		name := fmt.Sprintf("%s", possibleCurrentUser)
+		fmt.Printf("Using Username %s", name)
+		return name
+		// return &name
 	}
 }

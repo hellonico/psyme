@@ -4,22 +4,17 @@
 <div class="container">
 <div class="row">
     <div class="column">
-        マッチ度ランキング
-    </div>
-    <div class="column">
-    現在ユーザ名: {{.current}}
+        <h3>マッチ度ランキング</h3>
+        <p>現在ユーザ名: {{.current}}</p>
     </div>
 </div>
 <div class="row">
     <div class="column">
-        <table>
+        <ul>
             {{range .scores}}
-            <tr>
-                <td>{{.Name}}</td>
-                <td>{{.Score}}</td>
-            </tr>
+                <li>{{.Name}} : {{.Score}}</li>
             {{end}}
-        </table>
+        </ul>
     </div>
 </div>
 </div>
