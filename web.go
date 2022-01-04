@@ -6,6 +6,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
+	"gopkg.in/gorp.v1"
 	"net/http"
 	"sort"
 	"strings"
@@ -103,7 +104,19 @@ func web() {
 	})
 
 	router.GET("/presubmit", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "presend.tmpl", nil)
+		session := sessions.Default(c)
+		possibleCurrentUser := session.Get("user")
+		if possibleCurrentUser != nil {
+			// user already in session skip form
+			name := fmt.Sprintf("%s", possibleCurrentUser)
+			fmt.Printf("User %s is already logged in", name)
+			persistResults(session, dbmap, name)
+			c.Redirect(http.StatusSeeOther, "/users")
+		} else {
+			// send to user form
+			c.HTML(http.StatusOK, "presend.tmpl", nil)
+		}
+
 	})
 
 	router.GET("/users", func(c *gin.Context) {
@@ -114,23 +127,8 @@ func web() {
 		if possibleCurrentUser == nil {
 			c.Redirect(http.StatusSeeOther, "/presubmit")
 		}
-
 		currentName := possibleCurrentUser
-		var currentUser User
-		dbmap.SelectOne(&currentUser, fmt.Sprintf("SELECT * FROM User WHERE Name='%s'", currentName))
-
-		var others []User
-		dbmap.Select(&others, fmt.Sprintf("SELECT * FROM User WHERE Name!='%s'", currentName))
-
-		var scores = make([]Score, len(others))
-
-		for i, other := range others {
-			scores[i] = Score{other.Name, compareUsers(dbmap, currentUser, other)}
-		}
-
-		sort.Slice(scores, func(i, j int) bool {
-			return scores[i].Score > scores[j].Score
-		})
+		scores := getScores(dbmap, currentName)
 
 		c.HTML(http.StatusOK, "users.tmpl", gin.H{"current": currentName, "scores": scores})
 	})
@@ -142,21 +140,14 @@ func web() {
 		//}
 		session := sessions.Default(c)
 
-		answers := getResultsFromSessionAsJson(session)
-		name := strings.Trim(c.PostForm("message"), " ")
-
 		// update user in session
+		name := strings.Trim(c.PostForm("message"), " ")
 		session.Set("user", name)
 		session.Save()
 
-		obj, _ := dbmap.Get(User{}, name)
-		if obj == nil {
-			dbmap.Insert(&User{name, answers})
-		} else {
-			dbmap.Update(&User{name, answers})
-		}
+		persistResults(session, dbmap, name)
 
-		c.Redirect(http.StatusSeeOther, "/summary")
+		c.Redirect(http.StatusSeeOther, "/users")
 	})
 	router.GET("/summary", func(c *gin.Context) {
 		session := sessions.Default(c)
@@ -192,8 +183,8 @@ func web() {
 		}
 
 		var progress float64
-		progress = (float64(len(articles)) - notanswer) / float64(len(articles)) * 100
-		fmt.Printf("%.9f , %d , %d", progress, len(articles), notanswer)
+		progress = (float64(len(results)) - notanswer) / float64(len(results)) * 100
+		fmt.Printf("%.9f , %d , %d", progress, len(results), notanswer)
 
 		c.HTML(http.StatusOK, "summary.tmpl", gin.H{"results": results, "progress": int(progress)})
 	})
@@ -231,4 +222,34 @@ func web() {
 	})
 
 	router.Run(":8080")
+}
+
+func getScores(dbmap *gorp.DbMap, currentName interface{}) []Score {
+	var currentUser User
+	dbmap.SelectOne(&currentUser, fmt.Sprintf("SELECT * FROM User WHERE Name='%s'", currentName))
+
+	var others []User
+	dbmap.Select(&others, fmt.Sprintf("SELECT * FROM User WHERE Name!='%s'", currentName))
+
+	var scores = make([]Score, len(others))
+
+	for i, other := range others {
+		scores[i] = Score{other.Name, compareUsers(dbmap, currentUser, other)}
+	}
+
+	sort.Slice(scores, func(i, j int) bool {
+		return scores[i].Score > scores[j].Score
+	})
+	return scores
+}
+
+func persistResults(session sessions.Session, dbmap *gorp.DbMap, name string) {
+	answers := getResultsFromSessionAsJson(session)
+
+	obj, _ := dbmap.Get(User{}, name)
+	if obj == nil {
+		dbmap.Insert(&User{name, answers})
+	} else {
+		dbmap.Update(&User{name, answers})
+	}
 }
