@@ -135,7 +135,7 @@ func web() {
 		m := getMapFromSessioN(session)
 		fmt.Printf("Selected: %s\n", m[id])
 
-		c.HTML(http.StatusOK, "article.tmpl", a)
+		c.HTML(http.StatusOK, "article.tmpl", gin.H{"a": a, "selected": m[id]})
 	})
 	router.GET("/c/:id/:choice", func(c *gin.Context) {
 

@@ -1,25 +1,51 @@
 {{template "header" .}}
-<a href="/#{{.Id}}"><img width="32px" height="32px" src="https://www.rawshorts.com/freeicons/wp-content/uploads/2017/01/blue_repicthousebase_1484336386-1.png"></a>
-<a href="{{.OriginalLink}}"><img width="32px" height="32px" src="https://image.flaticon.com/icons/png/512/1104/1104163.png"/></a>
+<a href="/#{{.a.Id}}"><img width="32px" height="32px" src="https://www.rawshorts.com/freeicons/wp-content/uploads/2017/01/blue_repicthousebase_1484336386-1.png"></a>
+<a target="_blank" href="{{.a.OriginalLink}}"><img width="32px" height="32px" src="https://image.flaticon.com/icons/png/512/1104/1104163.png"/></a>
 
 
 <div class="container">
 <div class="row">
     <div class="column">
-        <h1>{{ .Title }}</h1>
+        <h1>{{ .a.Title }}</h1>
     </div>
 </div>
 <div class="row">
     <div>
-        <img src="{{.ImageURL}}"/>
+        {{ if eq "" .selected }}
+        <img src="{{.a.ImageURL}}"/>
+        {{ else }}
+        <img class="grey" src="{{.a.ImageURL}}"/>
+        {{ end }}
+
+<!--        <img src="{{.a.ImageURL}}"/>-->
     </div>
     <div class="column">
-        {{.Summary}}
+        {{.a.Summary}}
         <br/><br/>
-        <a href="/c/{{.Id}}/1"><button class="button" role="button">{{.Choice1}}</button></a>
-        <a href="/c/{{.Id}}/2"><button class="button" role="button">{{.Choice2}}</button></a>
-        <a href="/c/{{.Id}}/3"><button class="button" role="button">{{.Choice3}}</button></a>
-        <a href="/c/{{.Id}}/4"><button class="button" role="button">{{.Choice4}}</button></a>
+
+        {{ if eq "1" .selected }}
+        <a href="/c/{{.a.Id}}/1"><button class="button-outline button" role="button">{{.a.Choice1}}</button></a>
+        {{ else }}
+        <a href="/c/{{.a.Id}}/1"><button class="button" role="button">{{.a.Choice1}}</button></a>
+        {{ end }}
+
+        {{ if eq "2" .selected }}
+        <a href="/c/{{.a.Id}}/2"><button class="button-outline button" role="button">{{.a.Choice2}}</button></a>
+        {{ else }}
+        <a href="/c/{{.a.Id}}/2"><button class="button" role="button">{{.a.Choice2}}</button></a>
+        {{ end }}
+
+        {{ if eq "3" .selected }}
+        <a href="/c/{{.a.Id}}/3"><button class="button-outline button" role="button">{{.a.Choice3}}</button></a>
+        {{ else }}
+        <a href="/c/{{.a.Id}}/3"><button class="button" role="button">{{.a.Choice3}}</button></a>
+        {{ end }}
+
+        {{ if eq "4" .selected }}
+        <a href="/c/{{.a.Id}}/4"><button class="button-outline button" role="button">{{.a.Choice4}}</button></a>
+        {{ else }}
+        <a href="/c/{{.a.Id}}/4"><button class="button" role="button">{{.a.Choice4}}</button></a>
+        {{ end }}
 
     </div>
 </div>
