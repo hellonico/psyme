@@ -1,2 +1,2 @@
 #!/bin/bash
-./docker-build.sh && docker rm -f psyme && ./docker-run.sh
+git pull origin main && ./docker-build.sh && docker rm -f psyme && ./docker-run.sh
