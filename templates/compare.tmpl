@@ -1,0 +1,44 @@
+{{template "header" .}}
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="column"><h2>{{.username1}} / {{.username2}}</h2></div>
+    </div>
+    <div class="row">
+        <div class="column"><h2>マッチスコア : {{printf "%.f" .matchScore}} %
+        {{ if gt 10.0 .matchScore }}
+            <img height="64px" width="64px" src="https://cdn.icon-icons.com/icons2/1465/PNG/512/403brokenheart_100738.png"/>
+        {{ else }}
+            {{ range .numberHearts }}
+            <img height="32px" width="32px" src="https://www.rawshorts.com/freeicons/wp-content/uploads/2017/01/red_webpict35_1484337167-1.png"/>
+            {{ end }}
+
+            {{ end }}
+
+        </h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="column">
+
+
+                {{range .results}}
+                <a href="/a/{{.Article.Id}}">
+                {{ if eq .Same false }}
+
+            <img width="10%" height="10%" class="grey" src="{{.Article.ImageURL}}"/>
+                {{ else }}
+            <img width="10%" height="10%" src="{{.Article.ImageURL}}"/>
+
+
+                {{ end }}
+                </a>
+
+                {{end}}
+
+
+        </div>
+    </div>
+</div>

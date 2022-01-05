@@ -15,7 +15,7 @@
             <tr><th>なまえ</th><td>マッチ数</td><td>回答数</td></tr>
             </thead>
             {{range .scores}}
-            <tr><td style="width:50%">{{.Name}}</td><td>{{.Score.Count}}</td><td>{{.Score.Theirs}}</td></tr>
+            <tr><td style="width:50%"><a href="/compare/{{$.current}}/{{.Name}}">{{.Name}}</a></td><td>{{.Score.Count}}</td><td>{{.Score.Theirs}}</td></tr>
             {{end}}
         </table>
     </div>

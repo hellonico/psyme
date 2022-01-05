@@ -59,7 +59,51 @@ func web() {
 		}
 
 	})
+	router.GET("/compare/:username1/:username2", func(c *gin.Context) {
+		username1 := c.Param("username1")
+		username2 := c.Param("username2")
 
+		user1 := getUserFromName(dbmap, username1)
+		answers1 := stringToAnswersMap(user1.Answers)
+
+		user2 := getUserFromName(dbmap, username2)
+		answers2 := stringToAnswersMap(user2.Answers)
+
+		var articles []Article
+		dbmap.Select(&articles, "SELECT * FROM Article ORDER BY MyIndex")
+
+		var results = make([]CompareUser, 0)
+		matches := 0
+		for _, a := range articles {
+			same := answers1[a.Id] == answers2[a.Id] && answers1[a.Id] != ""
+			results = append(results, CompareUser{a, same})
+			if same {
+				matches++
+			}
+			//	results = append(results, CompareUser{a, same})
+			//	fmt.Printf("<> > [%s]\n", a.Id)
+			//} else {
+			//	fmt.Printf("!! ! [%s]\n", a.Id)
+			//}
+		}
+
+		matchScore := (float64(matches) / (float64(len(articles)))) * 100
+		// for testing
+		// matchScore += 50
+
+		// ridiculous lol
+		// no int range in templates
+		numberHearts := make([]int, int(matchScore/10))
+
+		//TODO to rewrite when go 1.18 can be installed (support for generics)
+		//filteredItems, _ := Filter(list, func(item int) bool {
+		//	return item%2 == 0
+		//})
+		fmt.Printf("~~ %s %s\n", username1, username2)
+
+		c.HTML(http.StatusOK, "compare.tmpl", gin.H{"numberHearts": numberHearts, "matchScore": matchScore, "username1": username1, "username2": username2, "results": results})
+
+	})
 	router.GET("/users", func(c *gin.Context) {
 		session := sessions.Default(c)
 		currentName := getUserFromSession(session)

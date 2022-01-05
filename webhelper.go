@@ -25,13 +25,15 @@ func getResultsFromSessionAsJson(session sessions.Session) string {
 	var jsonStr = fmt.Sprintf("%s", session.Get("results"))
 	return jsonStr
 }
-
+func stringToAnswersMap(jsonStr string) map[string]string {
+	x := map[string]string{}
+	json.Unmarshal([]byte(jsonStr), &x)
+	return x
+}
 func getMapFromSessioN(session sessions.Session) map[string]string {
 	jsonStr := getResultsFromSessionAsJson(session)
 	if jsonStr != "" {
-		x := map[string]string{}
-		json.Unmarshal([]byte(jsonStr), &x)
-		return x
+		return stringToAnswersMap(jsonStr)
 	} else {
 		m := make(map[string]string)
 		mJson, _ := json.Marshal(m)
@@ -94,4 +96,9 @@ func persistResults(session sessions.Session, dbmap *gorp.DbMap, name string) {
 	} else {
 		dbmap.Update(&User{name, answers})
 	}
+}
+
+type CompareUser struct {
+	Article Article
+	Same    bool
 }
