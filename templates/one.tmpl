@@ -1,0 +1,36 @@
+{{template "header" .}}
+<a class="noprint" href="/"><img width="32px" height="32px" src="https://www.rawshorts.com/freeicons/wp-content/uploads/2017/01/blue_repicthousebase_1484336386-1.png"></a>
+<a class="noprint" onClick="return window.confirm('今までのデーターを全部消しますか？');" href="/erase"><img width="32px" height="32px" src="https://cdn-icons-png.flaticon.com/512/167/167722.png"></a>
+
+<div style="float:right" class="progress">
+<div style="width:{{.progress}}%"  class="bar"></div >
+<div class="percent">{{.progress}}%</div >
+</div>
+<div class="container">
+<div class="row">
+    <div class="column">
+        <h2>{{ .userName }} [{{ .progress }} % ]</h2>
+    </div>
+</div>
+<div class="row">
+    <div class="column">
+
+<table>
+    {{range .results}}
+    <tr>
+        <td><a id="{{.Id}}" href="/a/{{.Id}}">
+            {{ if eq "" .ChoiceI }}
+            <img src="{{.ImageURL}}"/>
+            {{ else }}
+            <img class="grey" src="{{.ImageURL}}"/>
+            {{ end }}
+        </a></td>
+        <td><a id="{{.Id}}" href="/a/{{.Id}}">{{.Title}}</a></td>
+<!--        <td><a id="{{.Id}}" href="/c/{{.Id}}/{{.ChoiceI}}">{{.Choice}}</a></td>-->
+        <td><a id="{{.Id}}" href="/c/{{.Id}}/{{.ChoiceI}}">{{.Answer}}</a></td>
+    </tr>
+    {{end}}
+</table>
+    </div>
+</div>
+</div>

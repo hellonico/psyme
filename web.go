@@ -5,6 +5,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
+	"gopkg.in/gorp.v1"
 	"net/http"
 	"strings"
 )
@@ -137,41 +138,22 @@ func web() {
 	router.GET("/summary", func(c *gin.Context) {
 		session := sessions.Default(c)
 		m := getMapFromSessioN(session)
-		var articles []Article
-		dbmap.Select(&articles, "SELECT * FROM Article ORDER BY MyIndex")
 
-		results := make([]Result, len(articles))
-		notanswer := float64(0)
-		for i := range articles {
-			choiceI := m[articles[i].Id]
-			var choice string
-			var answer string
-			switch choiceI {
-			case "1":
-				choice = articles[i].Choice1
-				answer = articles[i].Answer1.Title
-			case "2":
-				choice = articles[i].Choice2
-				answer = articles[i].Answer2.Title
-			case "3":
-				choice = articles[i].Choice3
-				answer = articles[i].Answer3.Title
-			case "4":
-				choice = articles[i].Choice4
-				answer = articles[i].Answer4.Title
-			case "":
-				// fmt.Printf("+1")
-				notanswer = notanswer + 1
-			}
-			results[i] = Result{articles[i].Id, articles[i].Title, choiceI, choice, answer, articles[i].ImageURL}
-		}
-
-		var progress float64
-		progress = (float64(len(results)) - notanswer) / float64(len(results)) * 100
-		fmt.Printf("%.9f , %d , %d", progress, len(results), notanswer)
+		results, progress := getResultsFromMap(dbmap, m)
 
 		c.HTML(http.StatusOK, "summary.tmpl", gin.H{"results": results, "progress": int(progress)})
 	})
+
+	router.GET("/one/:user", func(c *gin.Context) {
+		userName := c.Param("user")
+		user := getUserFromName(dbmap, userName)
+		m := getUserAnswers(user)
+
+		results, progress := getResultsFromMap(dbmap, m)
+
+		c.HTML(http.StatusOK, "one.tmpl", gin.H{"userName": userName, "results": results, "progress": int(progress)})
+	})
+
 	router.GET("/a/:id", func(c *gin.Context) {
 		id := c.Param("id")
 		a, _ := dbmap.Get(Article{}, id)
@@ -212,6 +194,42 @@ func web() {
 	})
 
 	router.Run(":8080")
+}
+
+func getResultsFromMap(dbmap *gorp.DbMap, m map[string]string) ([]Result, float64) {
+	var articles []Article
+	dbmap.Select(&articles, "SELECT * FROM Article ORDER BY MyIndex")
+
+	results := make([]Result, len(articles))
+	notanswer := float64(0)
+	for i := range articles {
+		choiceI := m[articles[i].Id]
+		var choice string
+		var answer string
+		switch choiceI {
+		case "1":
+			choice = articles[i].Choice1
+			answer = articles[i].Answer1.Title
+		case "2":
+			choice = articles[i].Choice2
+			answer = articles[i].Answer2.Title
+		case "3":
+			choice = articles[i].Choice3
+			answer = articles[i].Answer3.Title
+		case "4":
+			choice = articles[i].Choice4
+			answer = articles[i].Answer4.Title
+		case "":
+			// fmt.Printf("+1")
+			notanswer = notanswer + 1
+		}
+		results[i] = Result{articles[i].Id, articles[i].Title, choiceI, choice, answer, articles[i].ImageURL}
+	}
+
+	var progress float64
+	progress = (float64(len(results)) - notanswer) / float64(len(results)) * 100
+	//fmt.Printf("%.9f , %d , %d", progress, len(results), notanswer)
+	return results, progress
 }
 
 // func getUserFromSession(session sessions.Session) (response *string) {
