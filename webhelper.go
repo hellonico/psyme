@@ -102,3 +102,55 @@ type CompareUser struct {
 	Article Article
 	Same    bool
 }
+
+func getResultsFromMap(dbmap *gorp.DbMap, m map[string]string) ([]Result, float64) {
+	var articles []Article
+	dbmap.Select(&articles, "SELECT * FROM Article ORDER BY MyIndex")
+
+	results := make([]Result, len(articles))
+	notanswer := float64(0)
+	for i := range articles {
+		choiceI := m[articles[i].Id]
+		var choice string
+		var answer string
+		switch choiceI {
+		case "1":
+			choice = articles[i].Choice1
+			answer = articles[i].Answer1.Title
+		case "2":
+			choice = articles[i].Choice2
+			answer = articles[i].Answer2.Title
+		case "3":
+			choice = articles[i].Choice3
+			answer = articles[i].Answer3.Title
+		case "4":
+			choice = articles[i].Choice4
+			answer = articles[i].Answer4.Title
+		case "":
+			// fmt.Printf("+1")
+			notanswer = notanswer + 1
+		}
+		results[i] = Result{articles[i].Id, articles[i].Title, choiceI, choice, answer, articles[i].ImageURL}
+	}
+
+	var progress float64
+	progress = (float64(len(results)) - notanswer) / float64(len(results)) * 100
+	//fmt.Printf("%.9f , %d , %d", progress, len(results), notanswer)
+	return results, progress
+}
+
+// func getUserFromSession(session sessions.Session) (response *string) {
+// is great but forces to return a pointer
+
+func getUserFromSession(session sessions.Session) string {
+	possibleCurrentUser := session.Get("user")
+	if possibleCurrentUser == nil {
+		return ""
+		// return nil
+	} else {
+		name := fmt.Sprintf("%s", possibleCurrentUser)
+		fmt.Printf("Using Username %s", name)
+		return name
+		// return &name
+	}
+}
