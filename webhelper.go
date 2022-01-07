@@ -104,8 +104,7 @@ type CompareUser struct {
 }
 
 func getResultsFromMap(dbmap *gorp.DbMap, m map[string]string) ([]Result, float64) {
-	var articles []Article
-	dbmap.Select(&articles, "SELECT * FROM Article ORDER BY MyIndex")
+	articles := getAllArticles(dbmap)
 
 	results := make([]Result, len(articles))
 	notanswer := float64(0)
@@ -137,6 +136,12 @@ func getResultsFromMap(dbmap *gorp.DbMap, m map[string]string) ([]Result, float6
 	progress = (float64(len(results)) - notanswer) / float64(len(results)) * 100
 	//fmt.Printf("%.9f , %d , %d", progress, len(results), notanswer)
 	return results, progress
+}
+
+func getAllArticles(dbmap *gorp.DbMap) []Article {
+	var articles []Article
+	dbmap.Select(&articles, "SELECT * FROM Article ORDER BY MyIndex")
+	return articles
 }
 
 // func getUserFromSession(session sessions.Session) (response *string) {

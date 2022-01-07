@@ -79,3 +79,9 @@ func (a Article) html() {
 	}
 
 }
+
+func printArrayOfString(test []string) {
+	semiformat := fmt.Sprintf("%q\n", test)  // Turn the slice into a string that looks like ["one" "two" "three"]
+	tokens := strings.Split(semiformat, " ") // Split this string by spaces
+	fmt.Printf(strings.Join(tokens, ", "))   // Join the Slice together (that was split by spaces) with commas
+}
