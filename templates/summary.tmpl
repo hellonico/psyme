@@ -15,9 +15,9 @@
     <tr>
         <td><a id="{{.Id}}" href="/a/{{.Id}}">
             {{ if eq "" .ChoiceI }}
-            <img src="{{.ImageURL}}"/>
+            <img src="/assets/img/{{.ImageFile}}"/>
             {{ else }}
-            <img class="grey" src="{{.ImageURL}}"/>
+            <img class="grey" src="/assets/img/{{.ImageFile}}"/>
             {{ end }}
         </a></td>
         <td><a id="{{.Id}}" href="/a/{{.Id}}">{{.Title}}</a></td>

@@ -21,6 +21,7 @@ func web() {
 	router.Use(sessions.Sessions("psyme", store))
 
 	router.LoadHTMLGlob("templates/*")
+	router.Static("/assets", "./assets")
 
 	router.GET("/", GetRoute)
 	router.GET("/erase", GetErase)

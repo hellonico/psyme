@@ -116,8 +116,8 @@ func images() {
 	var articles []Article
 	dbmap.Select(&articles, "Select * from Article")
 	for _, article := range articles {
-		filePath := fmt.Sprintf("%s.png", article.Id)
-		fmt.Printf("< %s", filePath)
+		filePath := fmt.Sprintf("assets/img/%s.png", article.Id)
+		fmt.Printf("< %s\n", filePath)
 		downloadFile(article.ImageURL, filePath)
 	}
 }

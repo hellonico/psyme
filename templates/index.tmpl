@@ -5,7 +5,7 @@
 <table>
 {{range .as}}
     <tr>
-        <td><a id="{{.Id}}" href="/a/{{.Id}}"><img title="{{.Title}}" src="{{.ImageURL}}"/></a></td>
+        <td><a id="{{.Id}}" href="/a/{{.Id}}"><img title="{{.Title}}" src="/assets/img/{{.ImageFile}}"/></a></td>
         <td><a id="{{.Id}}" href="/a/{{.Id}}">{{.Title}}</a></td>
     </tr>
 {{end}}

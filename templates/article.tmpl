@@ -12,9 +12,9 @@
 <div class="row">
     <div>
         {{ if eq "" .selected }}
-        <img src="{{.a.ImageURL}}"/>
+        <img src="/assets/img/{{.a.ImageFile}}"/>
         {{ else }}
-        <img class="grey" src="{{.a.ImageURL}}"/>
+        <img class="grey" src="/assets/img/{{.a.ImageFile}}"/>
         {{ end }}
 
 <!--        <img src="{{.a.ImageURL}}"/>-->
