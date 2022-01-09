@@ -117,8 +117,15 @@ func mapForUser(userName string) image.Image {
 	}
 
 	by := groupBy(tokenss)
+	bby := map[string]int{}
+	for key, element := range by {
+		//fmt.Println("Key:", key, "=>", "Element:", element)
+		if element > 1 {
+			bby[key] = element
+		}
+	}
 
-	bs, _ := json.Marshal(by)
+	bs, _ := json.Marshal(bby)
 	fmt.Println(string(bs))
 
 	return simpleMap(by)
