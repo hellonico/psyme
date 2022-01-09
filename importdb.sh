@@ -1,1 +1,1 @@
-docker cp ./articles.sqlite psyme:/app/articles.sqlite
+docker cp ../articles.sqlite psyme:/app/articles.sqlite
