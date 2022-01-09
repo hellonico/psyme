@@ -120,11 +120,11 @@ func mapForUser(userName string) image.Image {
 	bby := map[string]int{}
 	for key, element := range by {
 		//fmt.Println("Key:", key, "=>", "Element:", element)
-		//if element > 1 {
-		if !ignoreWords.Has(key) {
-			bby[key] = element
+		if element > 1 {
+			if !ignoreWords.Has(key) {
+				bby[key] = element
+			}
 		}
-		//}
 	}
 
 	bs, _ := json.Marshal(bby)
@@ -133,4 +133,4 @@ func mapForUser(userName string) image.Image {
 	return simpleMap(bby)
 }
 
-var ignoreWords = StrSlice{"ところ", "ため", "何", "中", "20", "うち", "%", "あなた", "一", "一つ", "がち", "こと", "せい", "そう", "たま", "ため", "つき", "ところ", "どちら", "の", "はず", "よう"}
+var ignoreWords = StrSlice{"そこ", "それ", "それなり", "だらし", ".", "1", "2", "3", "4", "40", "80", "H", "SNS", "T", "や", "もの", "ところ", "ため", "何", "中", "20", "うち", "%", "あなた", "一", "一つ", "がち", "こと", "せい", "そう", "たま", "ため", "つき", "ところ", "どちら", "の", "はず", "よう"}
