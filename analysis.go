@@ -73,8 +73,8 @@ func simpleMap(wordCounts map[string]int) image.Image {
 	w := wordclouds.NewWordcloud(
 		wordCounts,
 		wordclouds.FontFile("rounded-l-mplus-2c-medium.ttf"),
-		wordclouds.Height(2048),
-		wordclouds.Width(2048),
+		wordclouds.Height(512),
+		wordclouds.Width(512),
 		wordclouds.Colors(colors),
 	)
 
