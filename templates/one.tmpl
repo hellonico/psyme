@@ -21,8 +21,11 @@
     <div class="column">
 
 <table>
+
     {{range .results}}
     <tr>
+        <td><a id="{{.Id}}" href="/a/{{.Id}}">{{.Title}}</a></td>
+        <td><a id="{{.Id}}" href="/c/{{.Id}}/{{.ChoiceI}}">{{.Answer}}</a></td>
         <td><a id="{{.Id}}" href="/a/{{.Id}}">
             {{ if eq "" .ChoiceI }}
             <img src="/assets/img/{{.ImageFile}}"/>
@@ -30,9 +33,7 @@
             <img class="grey" src="/assets/img/{{.ImageFile}}"/>
             {{ end }}
         </a></td>
-        <td><a id="{{.Id}}" href="/a/{{.Id}}">{{.Title}}</a></td>
-<!--        <td><a id="{{.Id}}" href="/c/{{.Id}}/{{.ChoiceI}}">{{.Choice}}</a></td>-->
-        <td><a id="{{.Id}}" href="/c/{{.Id}}/{{.ChoiceI}}">{{.Answer}}</a></td>
+
     </tr>
     {{end}}
 </table>

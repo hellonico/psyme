@@ -17,8 +17,8 @@ func GetErase(c *gin.Context) {
 }
 
 func GetRoute(c *gin.Context) {
-	dbmap := initDb()
-	defer dbmap.Db.Close()
+	//dbmap := initDb()
+	//defer dbmap.Db.Close()
 
 	var articles []Article
 	_, err := dbmap.Select(&articles, "SELECT * FROM Article ORDER BY MyIndex")
